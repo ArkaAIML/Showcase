@@ -5,7 +5,8 @@ Transforms parsed resume data into structured portfolio schema.
 Converted to Agno Agent pattern.
 """
 
-from agno import Agent, Context
+from agno.agent import Agent
+from agno.run import RunContext
 import logging
 
 logger = logging.getLogger(__name__)
@@ -24,7 +25,7 @@ class SchemaBuilderAgent(Agent):
     
     name = "schema_builder_agent"
 
-    def run(self, ctx: Context):
+    def run(self, ctx: RunContext):
         """Build schema from profile data"""
         profile = ctx.state.get("profile")
         if not profile:

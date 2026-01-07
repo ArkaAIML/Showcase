@@ -3,13 +3,14 @@ DATA_AGENT.PY - Input Normalization
 Converts any input format to plain text
 """
 
-from agno import Agent, Context
+from agno.agent import Agent
+from agno.run import RunContext
 
 
 class DataAgent(Agent):
     name = "data_agent"
 
-    def run(self, ctx: Context):
+    def run(self, ctx: RunContext):
         """Convert input to raw text"""
         input_data = ctx.state.get("input")
         if not input_data:
