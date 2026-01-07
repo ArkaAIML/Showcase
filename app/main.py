@@ -1,25 +1,37 @@
 import logging
 from contextlib import asynccontextmanager
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.routes import api_router
 from app.core.config import settings
-from app.adapters.database import engine
-from app import models
+from app.adapters.database import engine, Base
+from app.models.portfolio import Portfolio 
 
 logger = logging.getLogger(__name__)
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
 
+    """
+    Application lifespan handler.
+
+    Responsibilities:
+    - Create DB tables at startup (DEV MODE)
+    - Dispose DB engine on shutdown
+    """
+
     logger.info("Showcase AI: Application starting up")
-    
-    models.Portfolio.metadata.create_all(bind=engine)
-    
-    yield  
-    
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    yield
+
     logger.info("Showcase AI: Application shutting down")
+
+    await engine.dispose()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
